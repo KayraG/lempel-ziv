@@ -74,6 +74,7 @@ func LZ(s string) []OrderedPair {
 
 func decompress(res []OrderedPair) string {
 	result := []string{}
+	// TODO
 
 	return strings.Join(result, "")
 }
@@ -86,6 +87,8 @@ func main() {
 	for _, value := range res {
 		strs = append(strs, fmt.Sprintf("(%d, %d)", value.ref, value.addition))
 	}
+
+	// seems like last bit is omitted. fix it
 
 	fmt.Println(strings.Join(strs, ", "))
 
