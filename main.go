@@ -48,7 +48,6 @@ func LZ(s string) []OrderedPair {
 		x := 0
 		_x := 0
 		for i+index < length {
-			fmt.Printf("Index: %d %d %d \n", index, i, x)
 			temp = append(temp, list[index+i])
 			_x = x
 			x = syms.IndexOf(temp) + 1
@@ -61,7 +60,7 @@ func LZ(s string) []OrderedPair {
 			}
 			i++
 			if i+index == length {
-				result = appendPair(result, _x, -1)
+				result = appendPair(result, x, -1)
 				break
 			}
 		}
@@ -74,7 +73,32 @@ func LZ(s string) []OrderedPair {
 
 func decompress(res []OrderedPair) string {
 	result := []string{}
-	// TODO
+	syms := bit.NewEmptyList()
+	length := len(res)
+	var temp OrderedPair
+	var r bit.BitList
+
+	for index := 0; index < length; index++ {
+		temp = res[index]
+		if temp.ref == 0 {
+			r = bit.NewBitList()
+			if temp.addition != -1 {
+				r = append(r, temp.addition)
+			}
+		} else {
+			r = syms.Get(temp.ref - 1)
+			if r == nil {
+				fmt.Printf("Error: You referenced the %dth item before its definition. \n", temp.ref)
+			} else {
+				if temp.addition != -1 {
+					r = append(r, temp.addition)
+				}
+			}
+		}
+
+		syms = bit.Add(syms, r)
+		result = append(result, r.ConvertToString())
+	}
 
 	return strings.Join(result, "")
 }
@@ -82,14 +106,17 @@ func decompress(res []OrderedPair) string {
 func main() {
 
 	strs := []string{}
-	res := LZ("0101001000111010101110100010")
+	input := "01010011011001010001011111010101110100010010111101011010010110111110101000101010101011111100000"
+	res := LZ(input)
 
 	for _, value := range res {
 		strs = append(strs, fmt.Sprintf("(%d, %d)", value.ref, value.addition))
 	}
 
-	// seems like last bit is omitted. fix it
-
 	fmt.Println(strings.Join(strs, ", "))
+
+	output := decompress(res)
+
+	fmt.Printf("\n\nDecompressed: %s \n Is it same? %t \n", output, output == input)
 
 }

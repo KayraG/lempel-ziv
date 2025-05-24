@@ -67,7 +67,7 @@ func (s List) Get(i int) BitList {
 	if i >= l {
 		return nil
 	}
-	return s._ctnt[l]
+	return s._ctnt[i]
 }
 
 func (s List) IndexOf(e BitList) int {
